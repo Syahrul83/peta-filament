@@ -32,7 +32,7 @@ class PetaLiflet extends Page implements HasForms
     public ?array $data = [];
 
     public $tampil = [];
-    public $nilai = [];
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.peta-liflet';
@@ -80,13 +80,23 @@ class PetaLiflet extends Page implements HasForms
         // Log the updated property
         Log::debug('Updated images property:', $this->images);
     }
+
+
+    public function deleteImg($index)
+    {
+
+        // deleler tampilan array kode php
+
+        unset($this->tampil[$index]);
+
+    }
     public function save()
     {
 
         $directory = 'gambar';
 
         foreach ($this->tampil as $imageData) {
-            $fileName = Uuid::uuid4() . '-img.text';
+            $fileName = Uuid::uuid4() . '-img.txt';
             $contents = $imageData;
 
 

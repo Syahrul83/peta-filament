@@ -50,12 +50,21 @@
     </form>
     <br>
 
-    <div>
-
-        @foreach($tampil as $index => $fileName)
-        <p><img src="{{ $fileName }}"> </p>
-        @endforeach
+    @foreach($tampil as $index => $fileName)
+    <div class="relative">
+        <img src="{{ $fileName }}" alt="Image" class="w-full h-auto">
+        <button wire:click="deleteImg({{ $index }})"
+            class="absolute top-0 right-0 flex items-center p-2 bg-red-500 text-white rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="red">
+                <path fill-rule="evenodd"
+                    d="M16 4a1 1 0 0 0-1-1h-3V2H8v1H5a1 1 0 0 0-1 1v1H3v2h1v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8h1V6h-1V4zm-1 2H5v9a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6zm-5 1a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V8a1 1 0 0 0-1-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span style="color: red;">Delete</span>
+        </button>
     </div>
+    @endforeach
+
     <br>
 
     <div wire:ignore>
