@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PetaKoordiant;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,12 +11,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('peta_koordiants', function (Blueprint $table) {
+        Schema::create('gambars', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->point('coor')->nullable();
-            $table->string('lokasi')->nullable();
-            $table->text('ket')->nullable();
+            $table->foreignIdFor(PetaKoordiant::class);
+            $table->string('path')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('peta_koordiants');
+        Schema::dropIfExists('gambars');
     }
 };
