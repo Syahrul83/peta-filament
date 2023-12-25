@@ -22,21 +22,63 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
             document.addEventListener('livewire:initialized', () => {
-                const map = L.map('map').setView([-1.5910990402674419, 118.14384327799779], 8);
+                var map = L.map('map').setView([0, 0], 13);
 
-                const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
                 }).addTo(map);
 
+                // Automatically get and update the current location
+                map.locate({
+                    setView: true,
+                    maxZoom: 13
+                });
+
+                // Handle location found event
+                map.on('locationfound', function (e) {
+                    var radius = e.accuracy / 2;
+
+              L.marker(e.latlng).addTo(map)
+                        .bindPopup('Your Location (' + radius + ' meters accuracy)').openPopup();
+
+              L.circle(e.latlng, radius).addTo(map);
+                    // marker.setLatLng(e.latlng);
+                    // Reverse Geocoding to get the city name
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var city = data.address.city || data.address.town || data.address.village;
+                            console.log('City:', city);
+                            @this.name = city;
+                            // You can use the city variable as needed, for example, display it in a popup
+                             L.marker(e.latlng).addTo(map)
+                                .bindPopup('Your Location (' + radius + ' meters accuracy)<br>lokasi: ' + city).openPopup();
+                        })
+                        .catch(error => console.error('Reverse Geocoding Error:', error));
+                });
+
+                // Handle location error event
+                map.on('locationerror', function (e) {
+                    console.error('Error getting geolocation:', e.message);
+                });
                 var markerIcon = L.icon({
                     iconUrl: '{{ asset("img/leaf-red.png") }}',
                     iconSize: [50, 50],
                 })
 
                 @foreach($peta as $index => $pet)
+                @php
 
-                L.marker([{{ $pet-> coor -> latitude }}, {{ $pet-> coor -> longitude }}], { icon: markerIcon }).bindPopup('<strong>{{ $pet->name }}</strong><br><img src="{{ $pet->image }}" alt="{{ $pet->name }}" style="max-width: 100px;">').addTo(map);
+            $lok = DB::table('gambars')->where('id', $pet->id)->first();
+            $filePath = $lok ? asset($lok->path) : null;
+            $contents = null;
+            if ($filePath) {
+                $contents = file_get_contents($filePath);
+            }
+
+           @endphp
+
+           L.marker([{{ $pet-> coor -> latitude }}, {{ $pet-> coor -> longitude }}], { icon: markerIcon }).bindPopup('<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}" >').addTo(map);
             @endforeach
             })
         </script>

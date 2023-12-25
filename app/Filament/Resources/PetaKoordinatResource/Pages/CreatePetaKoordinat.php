@@ -47,7 +47,7 @@ class CreatePetaKoordinat extends Page implements HasForms
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->label('Kota')
+                    ->label('Lokasi Peta')
                     ->required(),
                 TextInput::make('coor')
                     ->label('cordinate')
@@ -110,5 +110,6 @@ class CreatePetaKoordinat extends Page implements HasForms
         $this->images = [];
         $this->tampil = [];
         $this->form->fill();
+        return redirect()->route('filament.admin.resources.peta-koordinats.index');
     }
 }
