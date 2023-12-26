@@ -13,6 +13,11 @@
             color: black;
         }
 
+
+        #geocoder-input {
+            color: black;
+        }
+
         .leaflet-control-search {
             background-color: #ffffff;
             color: #000000;
@@ -22,6 +27,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 1000;
+
         }
     </style>
     <div>
@@ -29,7 +36,13 @@
 
 
     </div>
-
+    <div wire:ignore>
+        <input type="text" id="geocoder-input" placeholder="Pencarian Kota">
+        <button id="geocoder-button">Cari</button>
+    </div>
+    <div wire:ignore>
+        <div id="findbox"></div>
+    </div>
     <div wire:ignore>
         <div id="map" style="width: 100%; height: 700px;"></div>
     </div>
@@ -99,9 +112,13 @@ var markersLayer = new L.LayerGroup();  // layer containing searched elements
 map.addLayer(markersLayer);
 
 var controlSearch = new L.Control.Search({
-    layer: markersLayer,
-    initial: false,
-    position: 'topleft',
+    // layer: markersLayer,
+    // initial: false,
+    // position: 'topleft',
+    container: 'findbox',
+		layer: markersLayer,
+		initial: false,
+		collapsed: false
 });
 map.addControl(controlSearch);
 
@@ -118,16 +135,60 @@ map.addControl(controlSearch);
     var title = "{{ $pet->lokasi }}";
     var latlng = [{{ $pet->coor->latitude }}, {{ $pet->coor->longitude }}];
 
-    marker = new L.Marker(new L.latLng(latlng), { title: title }); // set property for searching
+    var marker = new L.Marker(
+        new L.latLng(latlng),
+        {
+            title: title,
+            icon: markerIcon // Set the custom marker icon
+        }
+    );
+
     marker.bindPopup('<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}">');
     markersLayer.addLayer(marker);
 @endforeach
 
 
 
-
 // Add search control
-L.Control.geocoder().addTo(map);
+// L.Control.geocoder().addTo(map);
+
+var geocoderControl = L.Control.geocoder({
+    defaultMarkGeocode: false,
+    placeholder: 'Pencarian Kota',
+}).addTo(map);
+
+// Event listener for when a location is selected
+geocoderControl.on('markgeocode', function (e) {
+    var latlng = e.geocode.center;
+    // Do something with the selected location, e.g., pan to it on the map
+    map.panTo(latlng);
+
+    // Add a marker at the selected location
+    var marker = L.marker(latlng).addTo(map);
+    marker.bindPopup('Selected Location: ' + e.geocode.name).openPopup();
+});
+
+// Handle button click to trigger geocoding
+document.getElementById('geocoder-button').addEventListener('click', function () {
+    var query = document.getElementById('geocoder-input').value;
+
+    // Trigger the geocoding
+    geocoderControl.options.geocoder.geocode(query, function (results) {
+        if (results.length > 0) {
+            var latlng = results[0].center;
+            map.panTo(latlng);
+
+            // Add a marker at the geocoded location
+            var marker = L.marker(latlng).addTo(map);
+            marker.bindPopup('Geocoded Location: ' + results[0].name).openPopup();
+        } else {
+            console.error('Location not found');
+        }
+    });
+});
+
+
+
     })
         </script>
 
