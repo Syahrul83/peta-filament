@@ -117,7 +117,7 @@
 
     <div wire:ignore>
         <span> )* pindahkan titik bunga warna merah untuk mendapatkan koordinat </span>
-        <div id="map" style="width: 100%; height: 700px;"></div>
+        <div id="map" style="width: 100%; height: 700px;  z-index: -1;"></div>
     </div>
 
     <div>
@@ -170,24 +170,24 @@
 
         <script>
             document.addEventListener('livewire:initialized', () => {
-                var map = L.map('map').setView([ {{ $coor }}], 13);
+                var map = L.map('map').setView([{{ $coor }}], 13);
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(map);
-
-
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
 
 
-                var markerIcon = L.icon({
-                    iconUrl: '{{ asset('img/leaf-red.png') }}',
-                    iconSize: [50, 50],
+
+
+            var markerIcon = L.icon({
+                iconUrl: '{{ asset('img/ leaf - red.png') }}',
+                iconSize: [50, 50],
                 });
 
             // Initialize marker with a default position
-            var marker = L.marker([ {{ $coor }}], {
+            var marker = L.marker([{{ $coor }}], {
                 icon: markerIcon,
-                draggable: true
+                    draggable: true
             }).bindPopup('{{ $lokasi }}').addTo(map);
 
             // Handle marker dragend event
@@ -202,7 +202,7 @@
                 @this.lat = coordinate.lat;
                 @this.lng = coordinate.lng;
 
-                console.log( @this.coor);
+                console.log(@this.coor);
             });
             });
         </script>

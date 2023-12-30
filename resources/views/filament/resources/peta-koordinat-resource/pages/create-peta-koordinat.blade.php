@@ -97,7 +97,7 @@
     </div>
     <div wire:ignore>
         <span> )* pindahkan titik bunga warna merah untuk mendapatkan koordinat </span>
-        <div id="map" style="width: 100%; height: 700px;"></div>
+        <div id="map" style="width: 100%; height: 700px;  z-index: -1;"></div>
     </div>
 
     <div>
@@ -191,7 +191,7 @@
                 });
 
                 var markerIcon = L.icon({
-                    iconUrl: '{{ asset('img/leaf-red.png') }}',
+                    iconUrl: '{{ asset('img/ leaf - red.png') }}',
                     iconSize: [50, 50],
                 });
 

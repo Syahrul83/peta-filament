@@ -2,8 +2,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <link rel="stylesheet" href="https://opengeo.tech/maps/leaflet-search/src/leaflet-search.css" />
+    {{--
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> --}}
+
+    {{--
+    <link rel="stylesheet" href="https://opengeo.tech/maps/leaflet-search/src/leaflet-search.css" /> --}}
+    <link rel="stylesheet" href="{{ asset('peta/geo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('peta/peta.css') }}" />
     <style>
         #map {
             height: 400px;
@@ -15,43 +20,147 @@
 
 
         #geocoder-input {
+            height: 30px;
             color: black;
+            margin-top: 4px;
         }
+
 
         .leaflet-control-search {
-            background-color: #ffffff;
             color: #000000;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
 
         }
+
+        /* peta Geocoder CSS - Hidden */
+        .leaflet-control-geocoder {
+            display: none;
+            /* Hide the geocoder control */
+        }
+
+        .leaflet-control-geocoder.search-exp {
+            display: none;
+            /* Hide the expanded state */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-form input {
+            display: none;
+            /* Hide the geocoder input */
+        }
+
+        .leaflet-control-geocoder.search-load .leaflet-control-geocoder-form input {
+            display: none;
+            /* Hide the loading state */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-form button {
+            display: none;
+            /* Hide the geocoder button */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-icon {
+            display: none;
+            /* Hide the geocoder icon */
+        }
+
+        /* Additional styles for the geocoder */
+        .leaflet-control-geocoder .leaflet-control-geocoder-alternatives {
+            display: none;
+            /* Hide the alternatives */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-alternatives li {
+            display: none;
+            /* Hide the alternative list items */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-address-context {
+            display: none;
+            /* Hide the address context */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-address-detail {
+            display: none;
+            /* Hide the address detail */
+        }
+
+        .leaflet-control-geocoder .leaflet-control-geocoder-error {
+            display: none;
+            /* Hide the geocoder error */
+        }
+
+        /* button geocoder   */
+        #geocoder-button {
+            display: block;
+            float: right;
+            width: 30px;
+            height: 30px;
+            margin-top: 4px;
+            /* Add margin-top to align with the input field */
+            background: url('../img/search-icon.png') no-repeat 4px 4px #fff;
+            border-radius: 4px;
+        }
+
+        #geocoder-button:hover {
+            /* Add styles for the hover state if needed */
+            /* For example, you can add a box shadow or change the opacity */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
     </style>
+
+
+
     <div>
+        @if (!empty($datas->name))
+        <h1> Lokasi /gedung : {!! $datas->lokasi??null !!} </h1>
+        <br>
+        <h5> Kota / Daerah : {!! $datas->name??null !!} </h5>
+        <br>
+        @endif
+
+        <div style="display: flex; flex-wrap: wrap;">
+            @foreach($marks as $index => $fileName)
+            @php
+            $filePath = asset($fileName->path);
+            $contents = file_get_contents($filePath);
+            @endphp
+            <div class="relative" style="width: 300px; margin-right: 10px;">
+                <img src="{{ $contents }}" class="w-full h-auto" style="max-width: 100%; max-height: 300px;"
+                    alt="{{ $fileName->path }}">
+
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @if (!empty($datas->name))
+    <div>
+        <br>
+        Keterangan :
+        <br>
+        {!! $datas->ket??null !!}
+    </div>
+    @endif
+    <div class="flex flex-row">
+        <div class="p-3" wire:ignore>
+            <x-filament::button color="success" onclick="location.reload();">
+                Refresh / Restat Map
+            </x-filament::button>
+        </div>
+        <div class="p-3" wire:ignore>
+            <input type="text" id="geocoder-input" placeholder="Pencarian Kota">
+            <button id="geocoder-button"></button>
+        </div>
+
+        <div class="p-3" wire:ignore>
+            <div id="findbox"></div>
+        </div>
 
 
+    </div>
 
-    </div>
     <div wire:ignore>
-        <input type="text" id="geocoder-input" placeholder="Pencarian Kota">
-        <button id="geocoder-button">Cari</button>
+        <div id="map" style="width: 100%; height: 700px;  z-index: -1;"></div>
     </div>
-    <div wire:ignore>
-        <div id="findbox"></div>
-    </div>
-    <div wire:ignore>
-        <div id="map" style="width: 100%; height: 700px;"></div>
-    </div>
-    @foreach($peta as $index => $petas)
-    @php
-    var_dump($index);
-    @endphp
-    {{ $petas-> coor -> latitude }}
-    @endforeach
+
     <div>
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -112,13 +221,11 @@ var markersLayer = new L.LayerGroup();  // layer containing searched elements
 map.addLayer(markersLayer);
 
 var controlSearch = new L.Control.Search({
-    // layer: markersLayer,
-    // initial: false,
-    // position: 'topleft',
     container: 'findbox',
-		layer: markersLayer,
-		initial: false,
-		collapsed: false
+    layer: markersLayer,
+    initial: false,
+    collapsed: false,
+    textPlaceholder: 'Gedung/Lokasi markers...' // Add the placeholder text here
 });
 map.addControl(controlSearch);
 
@@ -143,11 +250,27 @@ map.addControl(controlSearch);
         }
     );
 
-    marker.bindPopup('<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}">');
+    var popupContent = '<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}"><br><a href="#" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg fi-color-custom fi-btn-color-primary fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);">Selengkapnya</a>';
+
+    var petId = "{{ $pet->id }}";
+    var button = document.createElement('div');
+    button.innerHTML = popupContent;
+    button.querySelector('.fi-btn').addEventListener('click', (function(id) {
+        return function() {
+            // console.log(id);
+        //    @this.idx = id;
+           @this.set('idx',id);
+            console.log( @this.idx );
+        };
+    })(petId));
+
+    marker.bindPopup(button, {
+        closeButton: true,
+        minWidth: 200
+    });
+
     markersLayer.addLayer(marker);
 @endforeach
-
-
 
 // Add search control
 // L.Control.geocoder().addTo(map);
