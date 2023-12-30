@@ -158,7 +158,7 @@
     </div>
 
     <div wire:ignore>
-        <div id="map" style="width: 100%; height: 700px;  z-index: -1;"></div>
+        <div id="map" style="width: 100%; height: 700px;  z-index: 1;"></div>
     </div>
 
     <div>
