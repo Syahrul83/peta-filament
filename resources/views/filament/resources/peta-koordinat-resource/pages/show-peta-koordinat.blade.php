@@ -40,7 +40,10 @@
         </form>
 
     </div> -->
-
+    <div wire:ignore>
+        <span> )* pindahkan Map Pin warna merah untuk mendapatkan koordinat </span>
+        <div id="map" style="width: 100%; height: 550px;  z-index: 1;"></div>
+    </div>
     <form wire:submit.prevent="save">
         {{ $this->form }}
         <div class="mt-3 inline-block">
@@ -115,10 +118,7 @@
 
     <br>
 
-    <div wire:ignore>
-        <span> )* pindahkan titik bunga warna merah untuk mendapatkan koordinat </span>
-        <div id="map" style="width: 100%; height: 700px;  z-index: 1;"></div>
-    </div>
+
 
     <div>
 
@@ -180,8 +180,8 @@
 
 
             var markerIcon = L.icon({
-                iconUrl: '{{ asset('img/ leaf - red.png') }}',
-                iconSize: [50, 50],
+                iconUrl: '{{ asset('img/leaf-red.png') }}',
+                iconSize: [25, 50],
                 });
 
             // Initialize marker with a default position

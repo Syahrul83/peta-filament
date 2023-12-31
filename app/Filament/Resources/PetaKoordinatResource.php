@@ -44,14 +44,14 @@ class PetaKoordinatResource extends Resource
                 TextColumn::make('name')->label('Loaksi peta'),
                 TextColumn::make('lokasi')->label('Gedung / Tempat'),
                 TextColumn::make('coor')->label('Koordinat'),
-                TextColumn::make('ket'),
+
             ])->defaultSort('id', 'desc')
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-
+                Tables\Actions\DeleteAction::make(),
                 // Action::make('show')
                 //     ->url(fn(PetaKoordiant $record): string => route('filament.admin.resources.peta-koordinats.show', ['record' => $record->id]))
                 //     ->icon('heroicon-m-pencil-square')

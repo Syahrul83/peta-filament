@@ -40,6 +40,15 @@
         </form>
 
     </div> -->
+    <div wire:ignore>
+        <x-filament::button color="success" onclick="location.reload();">
+            Refresh jika belum mendapat lokasi peta
+        </x-filament::button>
+    </div>
+    <div wire:ignore>
+        <span> )* pindahkan Map Pin warna merah untuk mendapatkan koordinat </span>
+        <div id="map" style="width: 100%; height: 550px;  z-index: 1;"></div>
+    </div>
 
     <form wire:submit.prevent="save">
         {{ $this->form }}
@@ -70,8 +79,10 @@
 
         </div>
     </form>
-    <br>
 
+
+    @if (!empty($tampil))
+    <br>
     <div style="display: flex; flex-wrap: wrap;">
         @foreach($tampil as $index => $fileName)
         <div class="relative" style="width: 300px; margin-right: 10px;">
@@ -89,16 +100,10 @@
         @endforeach
     </div>
 
+    @endif
     <br>
-    <div wire:ignore>
-        <x-filament::button color="success" onclick="location.reload();">
-            Refresh jika belum mendapat lokasi peta
-        </x-filament::button>
-    </div>
-    <div wire:ignore>
-        <span> )* pindahkan titik bunga warna merah untuk mendapatkan koordinat </span>
-        <div id="map" style="width: 100%; height: 700px;  z-index: 1;"></div>
-    </div>
+
+
 
     <div>
 
@@ -191,8 +196,8 @@
                 });
 
                 var markerIcon = L.icon({
-                    iconUrl: '{{ asset('img/ leaf - red.png') }}',
-                    iconSize: [50, 50],
+                    iconUrl: '{{ asset('img/leaf-red.png') }}',
+                    iconSize: [25, 50],
                 });
 
             // Initialize marker with a default position

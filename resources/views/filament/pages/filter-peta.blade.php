@@ -105,6 +105,22 @@
             /* For example, you can add a box shadow or change the opacity */
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
+
+        .custom-tooltip {
+            background-color: transparent;
+            /* Remove background */
+            border: none;
+            /* Remove border */
+            box-shadow: none;
+            /* Remove box shadow */
+            color: #00FF00;
+            /* Set text color to green */
+            font-size: 12px;
+            /* Set font size to 12 pixels */
+            text-shadow: -1px -1px 0 #FF0000, 1px -1px 0 #FF0000, -1px 1px 0 #FF0000, 1px 1px 0 #FF0000;
+            /* Add red stroke */
+            /* Add any additional styles you need */
+        }
     </style>
 
 
@@ -139,24 +155,23 @@
         {!! $datas->ket??null !!}
     </div>
     @endif
-    <div class="flex flex-row">
-        <div class="p-3" wire:ignore>
-            <x-filament::button color="success" onclick="location.reload();">
-                Refresh / Restat Map
-            </x-filament::button>
-        </div>
-        <div class="p-3" wire:ignore>
+    <div class="flex flex-wrap space-x-4 font-mono text-white text-sm font-bold leading-6">
+
+        <div class="mx-3" wire:ignore>
             <input type="text" id="geocoder-input" placeholder="Pencarian Kota">
             <button id="geocoder-button"></button>
         </div>
 
-        <div class="p-3" wire:ignore>
+        <div class="mx-3" wire:ignore>
             <div id="findbox"></div>
         </div>
 
-
     </div>
-
+    <div class="mx-3" wire:ignore>
+        <x-filament::button color="success" onclick="location.reload();">
+            Refresh
+        </x-filament::button>
+    </div>
     <div wire:ignore>
         <div id="map" style="width: 100%; height: 700px;  z-index: 1;"></div>
     </div>
@@ -214,7 +229,7 @@ map.on('locationerror', function (e) {
 
 var markerIcon = L.icon({
     iconUrl: '{{ asset("img/leaf-red.png") }}',
-    iconSize: [50, 50],
+    iconSize: [25, 50],
 });
 
 var markersLayer = new L.LayerGroup();  // layer containing searched elements
@@ -240,36 +255,53 @@ map.addControl(controlSearch);
     @endphp
 
     var title = "{{ $pet->lokasi }}";
-    var latlng = [{{ $pet->coor->latitude }}, {{ $pet->coor->longitude }}];
+var latlng = [{{ $pet->coor->latitude }}, {{ $pet->coor->longitude }}];
 
-    var marker = new L.Marker(
-        new L.latLng(latlng),
-        {
-            title: title,
-            icon: markerIcon // Set the custom marker icon
-        }
-    );
+var marker = new L.Marker(
+    new L.latLng(latlng),
+    {
+        title: title,
+        icon: markerIcon // Set the custom marker icon
+    }
+    )
+    // .bindTooltip('<a href="#" id="tooltip-link">{{ $pet->lokasi }}</a>', {
+    //  permanent: true,
+    //  opacity:0.8,
+    //   direction: 'right',
+    //         });
 
-    var popupContent = '<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}"><br><a href="#" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg fi-color-custom fi-btn-color-primary fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);">Selengkapnya</a>';
+    .bindTooltip('{{ $pet->lokasi }}', {
+    permanent: true,
+    // opacity: 0.8,
+    direction: 'top',
+    className: 'custom-tooltip' // Add a custom class for styling purposes
+});
 
-    var petId = "{{ $pet->id }}";
-    var button = document.createElement('div');
-    button.innerHTML = popupContent;
-    button.querySelector('.fi-btn').addEventListener('click', (function(id) {
-        return function() {
-            // console.log(id);
-        //    @this.idx = id;
-           @this.set('idx',id);
-            console.log( @this.idx );
-        };
-    })(petId));
+var popupContent = '<strong>{{ $pet->lokasi }}</strong><br><img src="{{ $contents }}" alt="{{ $pet->name }}"><br><a href="#" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg fi-color-custom fi-btn-color-primary fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);">Selengkapnya</a>';
 
-    marker.bindPopup(button, {
-        closeButton: true,
-        minWidth: 200
-    });
+var petId = "{{ $pet->id }}";
+var button = document.createElement('div');
+button.innerHTML = popupContent;
+button.querySelector('.fi-btn').addEventListener('click', (function(id) {
+    return function() {
+        // console.log(id);
+        // @this.idx = id;
+        @this.set('idx',id);
+        console.log( @this.idx );
+    };
+})(petId));
 
-    markersLayer.addLayer(marker);
+marker.bindPopup(button, {
+    closeButton: true,
+    minWidth: 200
+});
+
+
+
+
+markersLayer.addLayer(marker);
+
+
 @endforeach
 
 // Add search control
@@ -292,23 +324,38 @@ geocoderControl.on('markgeocode', function (e) {
 });
 
 // Handle button click to trigger geocoding
-document.getElementById('geocoder-button').addEventListener('click', function () {
-    var query = document.getElementById('geocoder-input').value;
+const geocoderInput = document.getElementById("geocoder-input");
+
+  // Add event listener for Enter key press
+  geocoderInput.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission if needed
+      geocodeLocation();
+    }
+  });
+
+  // Add event listener for geocoder button click
+  document.getElementById("geocoder-button").addEventListener("click", function() {
+    geocodeLocation();
+  });
+
+  function geocodeLocation() {
+    var query = geocoderInput.value;
 
     // Trigger the geocoding
-    geocoderControl.options.geocoder.geocode(query, function (results) {
-        if (results.length > 0) {
-            var latlng = results[0].center;
-            map.panTo(latlng);
+    geocoderControl.options.geocoder.geocode(query, function(results) {
+      if (results.length > 0) {
+        var latlng = results[0].center;
+        map.panTo(latlng);
 
-            // Add a marker at the geocoded location
-            var marker = L.marker(latlng).addTo(map);
-            marker.bindPopup('Geocoded Location: ' + results[0].name).openPopup();
-        } else {
-            console.error('Location not found');
-        }
+        // Add a marker at the geocoded location
+        var marker = L.marker(latlng).addTo(map);
+        marker.bindPopup("Geocoded Location: " + results[0].name).openPopup();
+      } else {
+        console.error("Location not found");
+      }
     });
-});
+  }
 
 
 
