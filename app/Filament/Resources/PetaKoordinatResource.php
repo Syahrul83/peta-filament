@@ -51,7 +51,7 @@ class PetaKoordinatResource extends Resource
                 TextColumn::make('lokasi')->label('Gedung / Tempat'),
                 TextColumn::make('coor')->label('Koordinat'),
                 TextColumn::make('pembuat')->default(function (Model $record) {
-                    if ($record->id == 1) {
+                    if ($record->user_id == 1) {
                         return 'Admin';
                     } else {
                         return 'User';
@@ -65,7 +65,7 @@ class PetaKoordinatResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->disabled(fn(PetaKoordiant $record) => auth()->user()->id != $record->id),
+                    ->disabled(fn(PetaKoordiant $record) => auth()->user()->id != $record->user_id),
                 // Action::make('show')
                 //     ->url(fn(PetaKoordiant $record): string => route('filament.admin.resources.peta-koordinats.show', ['record' => $record->id]))
                 //     ->icon('heroicon-m-pencil-square')
