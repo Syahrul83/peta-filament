@@ -46,7 +46,10 @@
         </x-filament::button>
     </div>
     <div wire:ignore>
-        <span> )* pindahkan Map Pin warna merah untuk mendapatkan koordinat </span>
+        <span class="text-sm font-medium leading-6 text-red-500 dark:text-red-500">
+            )* pindahkan Map Pin Warna <strong style="color: red;"> Merah </strong> untuk mendapatkan koordinat
+        </span>
+
         <div id="map" style="width: 100%; height: 550px;  z-index: 1;"></div>
     </div>
 

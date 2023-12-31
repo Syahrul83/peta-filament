@@ -74,6 +74,7 @@ class CreatePetaKoordinat extends Page implements HasForms
 
 
         $peta = PetaKoordiant::create([
+            'user_id' => auth()->user()->id,
             'name' => $this->name,
             'lokasi' => $this->lokasi,
             'coor' => new Point($this->lat, $this->lng),

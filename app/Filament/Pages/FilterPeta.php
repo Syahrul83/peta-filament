@@ -8,9 +8,12 @@ use App\Models\PetaKoordiant;
 
 class FilterPeta extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-map';
 
     protected static string $view = 'filament.pages.filter-peta';
+    protected static ?string $navigationLabel = 'Cari Peta Difabel ';
+
+    protected ?string $heading = 'Cari Peta Difabel';
 
     public $peta;
 
@@ -18,6 +21,9 @@ class FilterPeta extends Page
 
     public $marks;
     public $datas;
+
+
+
     public function mount()
     {
         $this->peta = PetaKoordiant::all();

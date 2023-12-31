@@ -40,7 +40,7 @@ class PetaLiflet extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill();
-
+        abort_unless(false, 403);
     }
 
     public function form(Form $form): Form

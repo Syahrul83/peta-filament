@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -26,7 +27,12 @@ class PetaKoordinatResource extends Resource
 {
     protected static ?string $model = PetaKoordiant::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
+
+    protected static ?string $navigationLabel = 'Tambah Peta Difabel ';
+
+    protected ?string $heading = 'Tambah Peta Difabel';
+    protected static ?string $pluralModelLabel = 'Tambah Peta Difabel';
 
     public static function form(Form $form): Form
     {
@@ -44,6 +50,13 @@ class PetaKoordinatResource extends Resource
                 TextColumn::make('name')->label('Loaksi peta'),
                 TextColumn::make('lokasi')->label('Gedung / Tempat'),
                 TextColumn::make('coor')->label('Koordinat'),
+                TextColumn::make('pembuat')->default(function (Model $record) {
+                    if ($record->id == 1) {
+                        return 'Admin';
+                    } else {
+                        return 'User';
+                    }
+                })->label('Pembuat'),
 
             ])->defaultSort('id', 'desc')
             ->filters([
@@ -51,7 +64,8 @@ class PetaKoordinatResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(fn(PetaKoordiant $record) => auth()->user()->id != $record->id),
                 // Action::make('show')
                 //     ->url(fn(PetaKoordiant $record): string => route('filament.admin.resources.peta-koordinats.show', ['record' => $record->id]))
                 //     ->icon('heroicon-m-pencil-square')

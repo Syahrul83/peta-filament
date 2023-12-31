@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('peta_koordiants', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->nullable();
             $table->string('name')->nullable();
             $table->point('coor')->nullable();
             $table->string('lokasi')->nullable();
