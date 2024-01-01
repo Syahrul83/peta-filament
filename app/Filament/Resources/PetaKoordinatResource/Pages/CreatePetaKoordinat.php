@@ -61,6 +61,12 @@ class CreatePetaKoordinat extends Page implements HasForms
 
     }
 
+
+    public function updateTampil($resizedDataURL)
+    {
+        array_push($this->tampil, $resizedDataURL);
+    }
+
     public function deleteImg($index)
     {
 

@@ -199,7 +199,7 @@
                 });
 
                 var markerIcon = L.icon({
-                    iconUrl: '{{ asset('img/leaf-red.png') }}',
+                    iconUrl: '{{ asset('img/ leaf - red.png') }}',
                     iconSize: [25, 50],
                 });
 
@@ -265,9 +265,10 @@
                                 // const previewImg = document.createElement('img');
                                 // previewImg.src = resizedDataURL;
                                 // previewContainer.appendChild(previewImg);
-                                // console.log("resizedDataURL: " + JSON.stringify(resizedDataURL));
-                                @this.tampil.push(resizedDataURL);
-                                console.log(resizedDataURL);
+                                console.log("resizedDataURL: " + JSON.stringify(resizedDataURL));
+                                // @this.tampil.push(resizedDataURL);
+                                // console.log(resizedDataURL);
+                                @this.call('updateTampil', resizedDataURL);
                             };
                         };
 

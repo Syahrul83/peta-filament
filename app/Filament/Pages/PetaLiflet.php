@@ -34,13 +34,13 @@ class PetaLiflet extends Page implements HasForms
     public $tampil = [];
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static bool $shouldRegisterNavigation = false;
+    // protected static bool $shouldRegisterNavigation = false;
     protected static string $view = 'filament.pages.peta-liflet';
 
     public function mount(): void
     {
         $this->form->fill();
-        abort_unless(false, 403);
+        // abort_unless(false, 403);
     }
 
     public function form(Form $form): Form
