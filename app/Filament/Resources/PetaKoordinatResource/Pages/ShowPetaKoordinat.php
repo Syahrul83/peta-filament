@@ -75,6 +75,11 @@ class ShowPetaKoordinat extends Page implements HasForms
 
     }
 
+    public function updateTampil($resizedDataURL)
+    {
+        array_push($this->tampil, $resizedDataURL);
+    }
+
     public function deleteGmbr($id)
     {
 

@@ -183,7 +183,7 @@
 
 
             var markerIcon = L.icon({
-                iconUrl: '{{ asset('img/leaf-red.png') }}',
+                iconUrl: '{{ asset('img/ leaf - red.png') }}',
                 iconSize: [25, 50],
                 });
 
@@ -246,11 +246,8 @@
 
                                 // Display the resized image
                                 const resizedDataURL = canvas.toDataURL('image/jpeg');
-                                // const previewImg = document.createElement('img');
-                                // previewImg.src = resizedDataURL;
-                                // previewContainer.appendChild(previewImg);
-                                // console.log("resizedDataURL: " + JSON.stringify(resizedDataURL));
-                                @this.tampil.push(resizedDataURL);
+
+                                @this.call('updateTampil', resizedDataURL);
                                 console.log(resizedDataURL);
                             };
                         };
