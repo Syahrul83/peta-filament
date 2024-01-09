@@ -183,7 +183,7 @@
 
 
             var markerIcon = L.icon({
-                iconUrl: '{{ asset('img/ leaf - red.png') }}',
+                iconUrl: '{{ asset('img/leaf-red.png') }}',
                 iconSize: [25, 50],
                 });
 
