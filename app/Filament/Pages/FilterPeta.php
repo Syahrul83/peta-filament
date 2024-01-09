@@ -11,9 +11,9 @@ class FilterPeta extends Page
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
     protected static string $view = 'filament.pages.filter-peta';
-    protected static ?string $navigationLabel = 'Cari Peta Difabel ';
+    protected static ?string $navigationLabel = 'Cari Peta Karantina ';
 
-    protected ?string $heading = 'Cari Peta Difabel';
+    protected ?string $heading = 'Cari Peta Karantina';
 
     public $peta;
 

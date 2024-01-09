@@ -29,10 +29,10 @@ class PetaKoordinatResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map-pin';
 
-    protected static ?string $navigationLabel = 'Tambah Peta Difabel ';
+    protected static ?string $navigationLabel = 'Tambah Peta Karantina ';
 
-    protected ?string $heading = 'Tambah Peta Difabel';
-    protected static ?string $pluralModelLabel = 'Tambah Peta Difabel';
+    protected ?string $heading = 'Tambah Peta Karantina';
+    protected static ?string $pluralModelLabel = 'Tambah Peta Karantina';
 
     public static function form(Form $form): Form
     {
